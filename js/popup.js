@@ -1,17 +1,29 @@
 // Initialize button with user's preferred color
-let mainBtn = document.getElementById("mainBtn");
+let chaseBtn = document.getElementById("chaseBtn");
+let amexBtn = document.getElementById("amexBtn");
 
-mainBtn.addEventListener("click", async () => {
+chaseBtn.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: chaseOffersClicker,
   });
-  mainBtn.style.background = "#A69F98";
-  mainBtn.textContent = "All Done";
-  mainBtn.disabled = true;
+  chaseBtn.textContent = "Done";
+  chaseBtn.disabled = true;
 });
+
+amexBtn.addEventListener("click", async () => {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    function: amexOffersClicker,
+  });
+  amexBtn.textContent = "Done";
+  amexBtn.disabled = true;
+});
+
 async function chaseOffersClicker(event) {
   function getOffers() {
     var allButtons = Array.from(
@@ -46,4 +58,19 @@ async function chaseOffersClicker(event) {
     index++;
   }
   console.log(`added ${index} offers`);
+}
+
+async function amexOffersClicker() {
+  let offerButtons = Array.from(
+    document.getElementsByClassName(
+      "btn btn-sm btn-fluid offer-cta btn-secondary"
+    )
+  ).filter((btn) => btn.title == "Add to Card");
+  let index;
+  for (index = 0; index < offerButtons.length; ++index) {
+    console.log("Clicking offer button");
+    offerButtons[index].click();
+    // Wait 2seconds to be nice to AMEX servers :)
+    await new Promise((r) => setTimeout(r, 2000));
+  }
 }

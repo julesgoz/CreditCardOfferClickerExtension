@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Chase Offer Automation",
+  "name": "Churning Offer Automation",
   "version": "1.0",
-  "description": "Automatically add all the Chase offers to your account.",
+  "description": "Automatically add credit card offers to your account.",
   "permissions": ["storage", "activeTab", "scripting"],
 
   "action": {
