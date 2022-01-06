@@ -4,6 +4,10 @@
   "version": "1.0",
   "description": "Automatically add credit card offers to your account.",
   "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://secure05b.chase.com/*",
+    "https://global.americanexpress.com/*"
+  ],
 
   "action": {
     "default_popup": "UI/popup.html"

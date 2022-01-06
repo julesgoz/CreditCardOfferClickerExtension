@@ -1,28 +1,71 @@
-// Initialize button with user's preferred color
+const chaseAddress =
+  "https://secure05b.chase.com/web/auth/dashboard#/dashboard/overviewAccounts/overview/multiDeposit";
+const chaseLogin =
+  "https://secure05b.chase.com/web/auth/dashboard#/dashboard/overviewAccounts/overview/index";
+
+const amexAddress = "https://global.americanexpress.com/offers/eligible";
+
+// Initialize buttons
 let chaseBtn = document.getElementById("chaseBtn");
 let amexBtn = document.getElementById("amexBtn");
 
-chaseBtn.addEventListener("click", async () => {
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+let openChaseBtn = document.getElementById("openChaseBtn");
+let openAmexBtn = document.getElementById("openAmexBtn");
 
-  chrome.scripting.executeScript({
+chaseBtn.addEventListener("click", addChaseClickHandler);
+amexBtn.addEventListener("click", addAmexClickHandler);
+openChaseBtn.addEventListener("click", openChase);
+openAmexBtn.addEventListener("click", openAmex);
+
+async function addChaseClickHandler() {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab.url !== chaseAddress) {
+    await openChase();
+  }
+  await chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: chaseOffersClicker,
   });
   chaseBtn.textContent = "Done";
   chaseBtn.disabled = true;
-});
+  chaseBtn.classList.add("done");
+}
 
-amexBtn.addEventListener("click", async () => {
+async function openChase() {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab.url !== chaseAddress) {
+    chrome.tabs.update(undefined, { url: chaseAddress });
+  }
+  await new Promise((r) => setTimeout(r, 1000));
+  [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  await new Promise((r) => setTimeout(r, 2000));
+  await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    function: traverseChase,
+  });
+}
 
-  chrome.scripting.executeScript({
+async function addAmexClickHandler() {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab.url !== amexAddress) {
+    await openAmex();
+  }
+  await chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: amexOffersClicker,
   });
   amexBtn.textContent = "Done";
   amexBtn.disabled = true;
-});
+  amexBtn.classList.add("done");
+}
+
+async function openAmex() {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab.url !== amexAddress) {
+    chrome.tabs.update(undefined, { url: amexAddress });
+  }
+  await new Promise((r) => setTimeout(r, 2000));
+}
 
 async function chaseOffersClicker(event) {
   function getOffers() {
@@ -73,4 +116,10 @@ async function amexOffersClicker() {
     // Wait 2seconds to be nice to AMEX servers :)
     await new Promise((r) => setTimeout(r, 2000));
   }
+}
+
+async function traverseChase(params) {
+  const offersLink = document.getElementById("cardlyticsSeeAllOffers");
+  offersLink.click();
+  await new Promise((r) => setTimeout(r, 1000));
 }
