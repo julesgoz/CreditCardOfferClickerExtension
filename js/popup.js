@@ -1,7 +1,7 @@
 const chaseAddress =
   "https://secure05b.chase.com/web/auth/dashboard#/dashboard/overviewAccounts/overview/multiDeposit";
-const chaseLogin =
-  "https://secure05b.chase.com/web/auth/dashboard#/dashboard/overviewAccounts/overview/index";
+const chaseOffers =
+  "https://secure05b.chase.com/web/auth/dashboard#/dashboard/overviewAds/merchantFundedOffers/";
 
 const amexAddress = "https://global.americanexpress.com/offers/eligible";
 
@@ -19,8 +19,9 @@ openAmexBtn.addEventListener("click", openAmex);
 
 async function addChaseClickHandler() {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab.url !== chaseAddress) {
-    await openChase();
+  if (!tab.url.includes(chaseOffers)) {
+    chaseBtn.textContent = "Open Chase Offers First";
+    return;
   }
   await chrome.scripting.executeScript({
     target: { tabId: tab.id },
@@ -33,8 +34,8 @@ async function addChaseClickHandler() {
 
 async function openChase() {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab.url !== chaseAddress) {
-    chrome.tabs.update(undefined, { url: chaseAddress });
+  if (tab.url !== chaseAddress || !tab.url.includes(chaseOffers)) {
+    await chrome.tabs.update(undefined, { url: chaseAddress });
   }
   await new Promise((r) => setTimeout(r, 1000));
   [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -47,8 +48,9 @@ async function openChase() {
 
 async function addAmexClickHandler() {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab.url !== amexAddress) {
-    await openAmex();
+  if (!tab.url.includes(amexAddress)) {
+    chaseBtn.textContent = "Open Amex Offers First";
+    return;
   }
   await chrome.scripting.executeScript({
     target: { tabId: tab.id },
@@ -62,12 +64,12 @@ async function addAmexClickHandler() {
 async function openAmex() {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab.url !== amexAddress) {
-    chrome.tabs.update(undefined, { url: amexAddress });
+    await chrome.tabs.update(undefined, { url: amexAddress });
   }
   await new Promise((r) => setTimeout(r, 2000));
 }
 
-async function chaseOffersClicker(event) {
+async function chaseOffersClicker() {
   function getOffers() {
     var allButtons = Array.from(
       document.getElementsByClassName("mds-button--cpo")
