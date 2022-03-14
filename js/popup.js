@@ -72,7 +72,7 @@ async function openAmex() {
 async function chaseOffersClicker() {
   function getOffers() {
     var allButtons = Array.from(
-      document.getElementsByClassName("mds-button--cpo")
+      document.querySelectorAll("mds-button[type=button]")
     );
     let offerButtons = [];
     for (let i = 0; i < allButtons.length; ++i) {
