@@ -110,7 +110,9 @@ async function amexOffersClicker() {
     document.getElementsByClassName(
       "btn btn-sm btn-fluid offer-cta btn-secondary"
     )
-  ).filter((btn) => btn.title == "Activate Offer");
+  ).filter(
+    (btn) => btn.title == "Activate Offer" || btn.title == "Add to Card"
+  );
   let index;
   for (index = 0; index < offerButtons.length; ++index) {
     console.log("Clicking offer button");
